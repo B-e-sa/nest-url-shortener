@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  username String @unique
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  username   String   @unique
   created_at DateTime @default(now())
-  urls     Url[]
+  urls       Url[]
 
   @@map("users")
 }
@@ -26,7 +26,7 @@ model Url {
   original_url String
   short_url    String @unique
   user_id      Int
-  user         User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user         User?  @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("urls")
 }

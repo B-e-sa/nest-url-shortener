@@ -1,31 +1,14 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import * as argon from 'argon2';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './auth.dto';
+import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(
-        private authService: AuthService,
-        private prismaService: PrismaService
-    ) { }
+    constructor(private authService: AuthService) { }
 
     @Post('signup')
-    async signup(@Body() dto: AuthDto) {
-        const { email, username } = dto;
-
-        const hash = await argon.hash(dto.password);
-
-        const user = await this.prismaService.user.create({
-            data: {
-                email,
-                username,
-                password: hash
-            }
-        });
-
-        return this.authService.signup(user)
+    signup(@Body() dto: AuthDto) {
+        return this.authService.signup(dto)
     }
 
     @Post('signin')
