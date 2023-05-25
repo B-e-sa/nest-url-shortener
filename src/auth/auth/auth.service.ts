@@ -4,11 +4,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import { SigninDto } from './dto/signin.dto';
 import { isEmail } from 'class-validator';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class AuthService {
 
-    constructor(private prismaService: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private jwt: JwtService,
+        private config: ConfigService
+    ) { }
 
     async signup(dto: AuthDto) {
         const { email, username, password } = dto;
@@ -16,7 +22,7 @@ export class AuthService {
         try {
             const hash = await argon.hash(password);
 
-            await this.prismaService.user.create({
+            await this.prisma.user.create({
                 data: {
                     email,
                     username,
@@ -47,22 +53,30 @@ export class AuthService {
         try {
 
             if (isEmail(usernameOrEmail)) {
-                user = await this.prismaService
+                user = await this.prisma
                     .findUserByEmail(usernameOrEmail)
             }
 
-            user = await this.prismaService
+            user = await this.prisma
                 .findUserByUsername(usernameOrEmail)
 
             if (!user) throw new BadRequestException({
                 message: 'user not found'
             })
 
-            if (await argon.verify(user.password, password))
-                return {
-                    message: 'logged in',
-                    token: ''
-                }
+            const { id, username } = user;
+
+            if (await argon.verify(user.password, password)) {
+                const token = this.jwt.sign({
+                    sub: id,
+                    username: username
+                }, {
+                    expiresIn: '7d',
+                    privateKey: this.config.get('PRIVATE_KEY')
+                })
+
+                return { token }
+            }
 
             throw new BadRequestException({
                 message: 'incorrect password'

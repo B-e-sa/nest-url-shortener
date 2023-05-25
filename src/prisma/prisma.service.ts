@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client'
+import { ConfigService } from '@nestjs/config/dist';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-    constructor() {
+    constructor(config: ConfigService) {
         super({
             datasources: {
                 db: {
-                    url: "file:./dev.db"
+                    url: config.get('DATABASE_URL')
                 },
             },
         });
@@ -24,7 +25,7 @@ export class PrismaService extends PrismaClient {
     }
 
     async findUserByEmail(email: string) {
-        const user = await this.prisma.user.findUnique({
+        const user = await new PrismaClient().user.findUnique({
             where: { email }
         })
 
