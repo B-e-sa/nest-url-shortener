@@ -7,8 +7,8 @@ export class UserService {
 
     constructor(private prisma: PrismaService) { }
 
-    async getUserUrls(user: User) {
-        return await this.prisma.getUserUrlsById(user.id)
+    async getUserUrls(userId: number) {
+        return await this.prisma.getUserUrlsById(userId)
     }
 
     async getUser(user: User) {

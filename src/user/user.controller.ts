@@ -10,8 +10,8 @@ export class UserController {
 
     @UseGuards(JwtGuard)
     @Get('urls')
-    getMe(@GetUser() user: User) {
-        return this.user.getUserUrls(user)
+    getMe(@GetUser('id') userId: number) {
+        return this.user.getUserUrls(userId)
     }
 
     @UseGuards(JwtGuard)
