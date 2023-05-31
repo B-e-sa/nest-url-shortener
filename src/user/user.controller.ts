@@ -1,7 +1,8 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserService } from './user.service';
+import { User } from '@prisma/client';
 import { Request } from 'express';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
@@ -12,5 +13,14 @@ export class UserController {
     getMe(@Req() req: Request) {
         return this.user.getUserUrls(req.user)
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get()
+    async getUser(@Req() req: Request) {
+        const user = req.user as User
+        const username = user.username
+        return this.user.getUser(username)
+    }
+
 
 }

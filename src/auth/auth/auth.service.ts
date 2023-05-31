@@ -1,11 +1,11 @@
-import { BadRequestException, Body, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config/dist/config.service';
+import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
+import { isEmail } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import { SigninDto } from './dto/signin.dto';
-import { isEmail } from 'class-validator';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class AuthService {
