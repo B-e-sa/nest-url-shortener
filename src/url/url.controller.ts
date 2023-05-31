@@ -1,34 +1,33 @@
 import {
     Body,
     Controller,
+    Get,
     Post,
     Req,
-    UseGuards,
-    Get
+    UseGuards
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { UrlDto } from 'src/auth/auth/dto/url.dto';
+import { JwtGuard } from 'src/auth/auth/guards';
 import { UrlService } from './url.service';
+import { GetUser } from 'src/auth/auth/decorators/getUser.decorator';
 
 @Controller('url')
 export class UrlController {
 
     constructor(private url: UrlService) { }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtGuard)
     @Post('create')
     async createUrl(
         @Body() url: UrlDto,
-        @Req() req: Request
+        @GetUser() user: User
     ) {
-        const user = req.user as User
-        const userId = user.id
-        await this.url.createUrl(url, userId);
+        await this.url.createUrl(url, user.id);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtGuard)
     @Get()
     async getAllUrls() {
         this.url.generateShortUrl();

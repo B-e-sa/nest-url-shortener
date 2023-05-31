@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client'
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config/dist';
+import { PrismaClient, Url, User } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -16,19 +16,33 @@ export class PrismaService extends PrismaClient {
 
     private prisma = new PrismaClient();
 
-    async findUserByUsername(username: string) {
-        const user = await this.prisma.user.findUnique({
+    async findUserByUsername(username: string): Promise<User | null> {
+        const user: User | null = await this.prisma.user.findUnique({
             where: { username }
         })
 
         return user;
     }
 
-    async findUserByEmail(email: string) {
-        const user = await new PrismaClient().user.findUnique({
+    async findUserByEmail(email: string): Promise<User | null> {
+        const user: User | null = await new PrismaClient().user.findUnique({
             where: { email }
         })
 
         return user;
+    }
+
+    async getUserUrlsById(userId: number): Promise<Url[] | null> {
+        const urls: Url[] | null = await this.prisma.url.findMany({
+            where: { user_id: userId }
+        })
+
+        if (!urls) {
+            throw new NotFoundException({
+                message: "user doesn't have any urls"
+            })
+        }
+
+        return urls
     }
 }
