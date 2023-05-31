@@ -66,7 +66,7 @@ export class AuthService {
 
             const { id, username } = user;
 
-            if (await argon.verify(user.password, password)) {
+            if (await argon.verify(user.password!, password)) {
                 const token = this.jwt.sign({
                     sub: id,
                     username: username
