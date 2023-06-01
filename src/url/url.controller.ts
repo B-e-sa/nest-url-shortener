@@ -8,10 +8,10 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Request } from 'express';
-import { UrlDto } from 'src/auth/auth/dto/url.dto';
-import { JwtGuard } from 'src/auth/auth/guards';
+import { UrlDto } from 'src/auth/dto/url.dto';
+import { JwtGuard } from 'src/auth/guards';
 import { UrlService } from './url.service';
-import { GetUser } from 'src/auth/auth/decorators/getUser.decorator';
+import { GetUser } from 'src/auth/decorators/getUser.decorator';
 
 @Controller('url')
 export class UrlController {

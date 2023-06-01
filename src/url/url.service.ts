@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UrlDto } from 'src/auth/auth/dto/url.dto';
+import { UrlDto } from 'src/auth/dto/url.dto';
 import { InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
